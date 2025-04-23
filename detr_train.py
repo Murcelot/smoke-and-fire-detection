@@ -4,6 +4,11 @@ from datasets import load_dataset
 import numpy as np
 import os
 
+from dataclasses import dataclass
+from torchmetrics.detection.mean_ap import MeanAveragePrecision
+from transformers import AutoModelForObjectDetection, TrainingArguments, Trainer
+
+
 MODEL_NAME = "microsoft/conditional-detr-resnet-50"  # or "facebook/detr-resnet-50"
 IMAGE_SIZE = 480
 
@@ -141,10 +146,6 @@ def convert_bbox_yolo_to_pascal(boxes, image_size):
 
     return boxes
 
-from dataclasses import dataclass
-from torchmetrics.detection.mean_ap import MeanAveragePrecision
-
-
 @dataclass
 class ModelOutput:
     logits: torch.Tensor
@@ -224,7 +225,6 @@ eval_compute_metrics_fn = partial(
     compute_metrics, image_processor=image_processor, id2label=id2label, threshold=0.0
 )
 
-from transformers import AutoModelForObjectDetection
 
 model = AutoModelForObjectDetection.from_pretrained(
     MODEL_NAME,
@@ -232,8 +232,6 @@ model = AutoModelForObjectDetection.from_pretrained(
     label2id=label2id,
     ignore_mismatched_sizes=True,
 )
-
-from transformers import TrainingArguments
 
 training_args = TrainingArguments(
     output_dir="detr_cringe",
@@ -255,8 +253,6 @@ training_args = TrainingArguments(
     eval_do_concat_batches=False,
     push_to_hub=True
 )
-
-from transformers import Trainer
 
 trainer = Trainer(
     model=model,

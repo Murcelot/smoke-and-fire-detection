@@ -26,7 +26,7 @@ with torch.no_grad():
     inputs = image_processor(images=[image], return_tensors="pt")
     outputs = model(**inputs.to(device))
     target_sizes = torch.tensor([[image.size[1], image.size[0]]])
-    results = image_processor.post_process_object_detection(outputs, threshold=0.3, target_sizes=target_sizes)[0]
+    results = image_processor.post_process_object_detection(outputs, threshold=0.5, target_sizes=target_sizes)[0]
 
 # Print detected items
 for score, label, box in zip(results["scores"], results["labels"], results["boxes"]):
@@ -42,7 +42,10 @@ draw = ImageDraw.Draw(image)
 for score, label, box in zip(results["scores"], results["labels"], results["boxes"]):
     box = [round(i, 2) for i in box.tolist()]
     x, y, x2, y2 = tuple(box)
-    draw.rectangle((x, y, x2, y2), outline="red", width=1)
-    draw.text((x, y), model.config.id2label[label.item()], fill="white")
+    if label.item == 0:
+        draw.rectangle((x, y, x2, y2), outline="red", width=5)
+    else:
+        draw.rectangle((x, y, x2, y2), outline="green", width=5)
 
-result.save(img_path[:-4] + '_detected' + img_path[-4:])
+print('Smoke in red bbox, fire in green bbox')
+image.save(img_path[:-4] + '_detected' + img_path[-4:])

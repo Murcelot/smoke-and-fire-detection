@@ -47,5 +47,6 @@ for score, label, box in zip(results["scores"], results["labels"], results["boxe
     else:
         draw.rectangle((x, y, x2, y2), outline="green", width=5)
 
-print('Smoke in red bbox, fire in green bbox')
+print('Image with bboxes saved in ' + img_path[:-4] + '_detected' + img_path[-4:])
+print('smoke in red bbox, fire in green bbox')
 image.save(img_path[:-4] + '_detected' + img_path[-4:])

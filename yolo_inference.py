@@ -17,9 +17,6 @@ for result in results:
     bbox_res = result.boxes
     for score, label, box in zip(bbox_res.conf, bbox_res.cls, bbox_res.xyxy):
         box = [round(i, 2) for i in box.tolist()]
-        # print(score)
-        # print(label)
-        # print(box)
         print(
             f"Detected {id2label[label.item()]} with confidence "
             f"{round(score.item(), 3)} at location {box}"

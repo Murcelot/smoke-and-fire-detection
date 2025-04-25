@@ -8,8 +8,6 @@ import warnings
 warnings.filterwarnings("ignore", message=".*copying from a non-meta parameter.*")
 
 # Loading model and get device
-id2label = {0 : 'Smoke', 1 : 'Fire'}
-
 device, _, _ = get_backend()
 model_path = os.path.join(os.getcwd(), 'weights', 'detr_weights')
 image_processor = AutoImageProcessor.from_pretrained(model_path, use_fast=False)
@@ -26,7 +24,7 @@ with torch.no_grad():
     inputs = image_processor(images=[image], return_tensors="pt")
     outputs = model(**inputs.to(device))
     target_sizes = torch.tensor([[image.size[1], image.size[0]]])
-    results = image_processor.post_process_object_detection(outputs, threshold=0.5, target_sizes=target_sizes)[0]
+    results = image_processor.post_process_object_detection(outputs, threshold=0.3, target_sizes=target_sizes)[0]
 
 # Print detected items
 for score, label, box in zip(results["scores"], results["labels"], results["boxes"]):
@@ -47,6 +45,6 @@ for score, label, box in zip(results["scores"], results["labels"], results["boxe
     else:
         draw.rectangle((x, y, x2, y2), outline="green", width=5)
 
-print('Image with bboxes saved in ' + img_path[:-4] + '_detected' + img_path[-4:])
+print('Image with bboxes saved in ' + img_path[:-4] + '_detected_DETR' + img_path[-4:])
 print('smoke in red bbox, fire in green bbox')
-image.save(img_path[:-4] + '_detected' + img_path[-4:])
+image.save(img_path[:-4] + '_detected_DETR' + img_path[-4:])
